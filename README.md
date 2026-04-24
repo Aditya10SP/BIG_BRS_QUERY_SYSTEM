@@ -11,43 +11,6 @@ A hybrid retrieval system that combines vector-based semantic search with knowle
 - **Faithfulness Validation**: Verifies responses are grounded in source documents
 
 ## Architecture
-graph TB
-    subgraph "Ingestion Pipeline (Offline)"
-        A[Document Input] --> B[Parser]
-        B --> C[Hierarchical Chunker]
-        C --> D[Embedding Generator]
-        C --> E[BM25 Indexer]
-        C --> F[Entity Extractor]
-        F --> G[Entity Resolver]
-        G --> H[Conflict Detector]
-        H --> I[Graph Populator]
-    end
-
-    subgraph "Storage Layer"
-        D --> J[(Qdrant)]
-        E --> K[(BM25 Index)]
-        C --> L[(PostgreSQL)]
-        I --> M[(Neo4j)]
-    end
-
-    subgraph "Query Pipeline (Runtime)"
-        N[User Query] --> O[Query Router]
-        O --> P[Vector Retriever]
-        O --> Q[Graph Retriever]
-        P --> R[Result Fusion]
-        Q --> R
-        R --> S[Cross-Encoder Reranker]
-        S --> T[Context Assembler]
-        T --> U[LLM Generator]
-        U --> V[Faithfulness Validator]
-        V --> W[Response with Citations]
-    end
-
-    J --> P
-    K --> P
-    L --> P
-    M --> Q
-
 
 The system uses a two-pipeline approach:
 
