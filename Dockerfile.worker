@@ -1,0 +1,41 @@
+# Dockerfile for Graph RAG Layer Ingestion Worker
+FROM python:3.10-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements file
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install additional worker dependencies
+RUN pip install --no-cache-dir celery[redis]==5.3.4 redis==5.0.1
+
+# Download spaCy model
+RUN python -m spacy download en_core_web_sm
+
+# Copy application code
+COPY config/ ./config/
+COPY src/ ./src/
+COPY .env.example .env
+
+# Create uploads directory
+RUN mkdir -p uploads
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV LOG_LEVEL=INFO
+ENV STRUCTURED_LOGGING=true
+ENV CELERY_BROKER_URL=redis://redis:6379/0
+ENV CELERY_RESULT_BACKEND=redis://redis:6379/0
+
+# Run the ingestion worker
+CMD ["celery", "-A", "src.worker.celery_app", "worker", "--loglevel=info", "--concurrency=2"]

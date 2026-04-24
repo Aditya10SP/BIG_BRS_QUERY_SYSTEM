@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph RAG Query System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>📚 Graph RAG Query System</h1>
+            <p class="subtitle">Upload banking documents and ask intelligent questions</p>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Upload Section -->
+            <section class="upload-section">
+                <h2>📤 Upload Documents</h2>
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📄</div>
+                    <p class="upload-text">Drag & drop files here or click to browse</p>
+                    <p class="upload-hint">Supports .docx and .pdf files</p>
+                    <input type="file" id="fileInput" accept=".docx,.pdf" multiple hidden>
+                    <button class="btn btn-primary" id="browseBtn">Browse Files</button>
+                </div>
+
+                <!-- File List -->
+                <div class="file-list" id="fileList"></div>
+
+                <!-- Upload Progress -->
+                <div class="upload-progress" id="uploadProgress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p class="progress-text" id="progressText">Uploading...</p>
+                </div>
+            </section>
+
+            <!-- Query Section -->
+            <section class="query-section">
+                <h2>💬 Ask Questions</h2>
+                
+                <!-- Query Mode Selection -->
+                <div class="mode-selector">
+                    <label class="mode-option">
+                        <input type="radio" name="mode" value="AUTO" checked>
+                        <span class="mode-label">
+                            <strong>Auto</strong>
+                            <small>Let AI choose the best mode</small>
+                        </span>
+                    </label>
+                    <label class="mode-option">
+                        <input type="radio" name="mode" value="VECTOR">
+                        <span class="mode-label">
+                            <strong>Vector</strong>
+                            <small>Semantic search</small>
+                        </span>
+                    </label>
+                    <label class="mode-option">
+                        <input type="radio" name="mode" value="GRAPH">
+                        <span class="mode-label">
+                            <strong>Graph</strong>
+                            <small>Relationship queries</small>
+                        </span>
+                    </label>
+                    <label class="mode-option">
+                        <input type="radio" name="mode" value="HYBRID">
+                        <span class="mode-label">
+                            <strong>Hybrid</strong>
+                            <small>Combined approach</small>
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Query Input -->
+                <div class="query-input-container">
+                    <textarea 
+                        id="queryInput" 
+                        class="query-input" 
+                        placeholder="Ask a question about your documents... (e.g., 'What is NEFT?', 'What systems does RTGS depend on?', 'Compare NEFT and RTGS transaction limits')"
+                        rows="3"
+                    ></textarea>
+                    <button class="btn btn-primary btn-query" id="queryBtn">
+                        <span id="queryBtnText">Ask Question</span>
+                        <span id="queryBtnLoader" class="loader" style="display: none;"></span>
+                    </button>
+                </div>
+
+                <!-- Response Area -->
+                <div class="response-area" id="responseArea" style="display: none;">
+                    <div class="response-header">
+                        <h3>📝 Answer</h3>
+                        <span class="mode-badge" id="modeBadge"></span>
+                    </div>
+                    <div class="response-content" id="responseContent"></div>
+                    
+                    <!-- Citations -->
+                    <div class="citations" id="citations" style="display: none;">
+                        <h4>📎 Sources</h4>
+                        <div class="citations-list" id="citationsList"></div>
+                    </div>
+
+                    <!-- Metrics -->
+                    <div class="metrics" id="metrics" style="display: none;">
+                        <div class="metric">
+                            <span class="metric-label">Query Time:</span>
+                            <span class="metric-value" id="queryTime">-</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Faithfulness Score:</span>
+                            <span class="metric-value" id="faithfulnessScore">-</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Chunks Retrieved:</span>
+                            <span class="metric-value" id="chunksRetrieved">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                <div class="error-message" id="errorMessage" style="display: none;"></div>
+            </section>
+
+            <!-- Document Status -->
+            <section class="status-section">
+                <h2>📊 Document Status</h2>
+                <div class="status-grid" id="statusGrid">
+                    <div class="status-card">
+                        <div class="status-number" id="totalDocs">0</div>
+                        <div class="status-label">Total Documents</div>
+                    </div>
+                    <div class="status-card">
+                        <div class="status-number" id="processingDocs">0</div>
+                        <div class="status-label">Processing</div>
+                    </div>
+                    <div class="status-card">
+                        <div class="status-number" id="completedDocs">0</div>
+                        <div class="status-label">Completed</div>
+                    </div>
+                    <div class="status-card">
+                        <div class="status-number" id="failedDocs">0</div>
+                        <div class="status-label">Failed</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Graph RAG Layer v1.0 | Powered by Neo4j, Qdrant & Ollama</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

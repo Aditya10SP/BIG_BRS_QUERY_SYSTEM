@@ -1,0 +1,196 @@
+# Prometheus alert rules for Graph RAG Layer
+
+groups:
+  - name: graph_rag_api_alerts
+    interval: 30s
+    rules:
+      # High error rate alert
+      - alert: HighErrorRate
+        expr: |
+          rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "High API error rate detected"
+          description: "Error rate is {{ $value | humanize }} errors/sec for {{ $labels.endpoint }}"
+
+      # Slow query performance
+      - alert: SlowQueryPerformance
+        expr: |
+          histogram_quantile(0.95, rate(query_pipeline_duration_seconds_bucket[5m])) > 10
+        for: 5m
+        labels:
+          severity: warning
+          component: query_pipeline
+        annotations:
+          summary: "Slow query performance detected"
+          description: "P95 query latency is {{ $value | humanize }}s for mode {{ $labels.mode }}"
+
+      # Very slow queries (critical)
+      - alert: VerySlowQueries
+        expr: |
+          histogram_quantile(0.95, rate(query_pipeline_duration_seconds_bucket[5m])) > 30
+        for: 2m
+        labels:
+          severity: critical
+          component: query_pipeline
+        annotations:
+          summary: "Critical query performance degradation"
+          description: "P95 query latency is {{ $value | humanize }}s - immediate attention required"
+
+      # Service down
+      - alert: APIServiceDown
+        expr: up{job="graph-rag-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: api
+        annotations:
+          summary: "API service is down"
+          description: "The Graph RAG API service is not responding to health checks"
+
+      # High request rate (potential DDoS)
+      - alert: HighRequestRate
+        expr: |
+          rate(http_requests_total[1m]) > 100
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "Unusually high request rate"
+          description: "Request rate is {{ $value | humanize }} req/sec - potential DDoS or traffic spike"
+
+  - name: graph_rag_quality_alerts
+    interval: 30s
+    rules:
+      # Low faithfulness warnings
+      - alert: HighLowFaithfulnessRate
+        expr: |
+          rate(low_faithfulness_warnings_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: faithfulness_validator
+        annotations:
+          summary: "High rate of low faithfulness responses"
+          description: "{{ $value | humanize }} low faithfulness warnings per second - check LLM quality"
+
+      # LLM errors
+      - alert: LLMErrorRate
+        expr: |
+          rate(llm_requests_total{status="error"}[5m]) / rate(llm_requests_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: llm_generator
+        annotations:
+          summary: "High LLM error rate"
+          description: "{{ $value | humanizePercentage }} of LLM requests are failing"
+
+      # Slow LLM responses
+      - alert: SlowLLMResponses
+        expr: |
+          histogram_quantile(0.95, rate(llm_request_duration_seconds_bucket[5m])) > 20
+        for: 5m
+        labels:
+          severity: warning
+          component: llm_generator
+        annotations:
+          summary: "Slow LLM response times"
+          description: "P95 LLM latency is {{ $value | humanize }}s"
+
+  - name: graph_rag_ingestion_alerts
+    interval: 30s
+    rules:
+      # Ingestion failures
+      - alert: HighIngestionFailureRate
+        expr: |
+          rate(ingestion_pipeline_requests_total{status="failed"}[5m]) / rate(ingestion_pipeline_requests_total[5m]) > 0.2
+        for: 5m
+        labels:
+          severity: warning
+          component: ingestion_pipeline
+        annotations:
+          summary: "High ingestion failure rate"
+          description: "{{ $value | humanizePercentage }} of ingestion requests are failing"
+
+      # Slow ingestion
+      - alert: SlowIngestion
+        expr: |
+          histogram_quantile(0.95, rate(ingestion_pipeline_duration_seconds_bucket[5m])) > 600
+        for: 10m
+        labels:
+          severity: warning
+          component: ingestion_pipeline
+        annotations:
+          summary: "Slow document ingestion"
+          description: "P95 ingestion time is {{ $value | humanize }}s (over 10 minutes)"
+
+      # Celery task failures
+      - alert: HighCeleryTaskFailureRate
+        expr: |
+          rate(celery_tasks_total{status="failure"}[5m]) / rate(celery_tasks_total[5m]) > 0.2
+        for: 5m
+        labels:
+          severity: warning
+          component: celery_worker
+        annotations:
+          summary: "High Celery task failure rate"
+          description: "{{ $value | humanizePercentage }} of Celery tasks are failing"
+
+  - name: graph_rag_storage_alerts
+    interval: 30s
+    rules:
+      # Storage operation errors
+      - alert: HighStorageErrorRate
+        expr: |
+          rate(storage_operations_total{status="error"}[5m]) / rate(storage_operations_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: storage
+        annotations:
+          summary: "High storage operation error rate"
+          description: "{{ $value | humanizePercentage }} of {{ $labels.storage }} operations are failing"
+
+      # Slow storage operations
+      - alert: SlowStorageOperations
+        expr: |
+          histogram_quantile(0.95, rate(storage_operation_duration_seconds_bucket[5m])) > 5
+        for: 5m
+        labels:
+          severity: warning
+          component: storage
+        annotations:
+          summary: "Slow storage operations"
+          description: "P95 {{ $labels.storage }} {{ $labels.operation }} latency is {{ $value | humanize }}s"
+
+  - name: graph_rag_system_alerts
+    interval: 30s
+    rules:
+      # High memory usage (if exposed)
+      # - alert: HighMemoryUsage
+      #   expr: |
+      #     process_resident_memory_bytes / 1024 / 1024 / 1024 > 4
+      #   for: 5m
+      #   labels:
+      #     severity: warning
+      #     component: system
+      #   annotations:
+      #     summary: "High memory usage"
+      #     description: "Process is using {{ $value | humanize }}GB of memory"
+
+      # No recent requests (service idle or down)
+      - alert: NoRecentRequests
+        expr: |
+          rate(http_requests_total[5m]) == 0
+        for: 10m
+        labels:
+          severity: info
+          component: api
+        annotations:
+          summary: "No recent API requests"
+          description: "No requests received in the last 10 minutes - service may be idle or unreachable"

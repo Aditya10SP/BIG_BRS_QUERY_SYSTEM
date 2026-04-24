@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-section {
+            background: #f5f5f5;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        button {
+            background: #4f46e5;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #4338ca;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 API Upload Test</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Check Backend Connection</h2>
+        <button onclick="testBackend()">Test Backend</button>
+        <div id="backend-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Check API Endpoints</h2>
+        <button onclick="testEndpoints()">Test Endpoints</button>
+        <div id="endpoints-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Upload File</h2>
+        <input type="file" id="fileInput" accept=".docx,.pdf">
+        <button onclick="testUpload()">Upload File</button>
+        <div id="upload-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 4: Test Query</h2>
+        <input type="text" id="queryInput" placeholder="Enter test query" style="width: 300px; padding: 8px;">
+        <button onclick="testQuery()">Test Query</button>
+        <div id="query-result" class="result"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8000';
+
+        async function testBackend() {
+            const resultDiv = document.getElementById('backend-result');
+            resultDiv.innerHTML = 'Testing...';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/`);
+                const data = await response.json();
+                resultDiv.innerHTML = `<span class="success">✅ Backend is running!</span>\n${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Error: ${error.message}</span>`;
+            }
+        }
+
+        async function testEndpoints() {
+            const resultDiv = document.getElementById('endpoints-result');
+            resultDiv.innerHTML = 'Testing endpoints...';
+            
+            const endpoints = [
+                '/',
+                '/api/v1/ingest/test-123',
+            ];
+            
+            let results = '';
+            for (const endpoint of endpoints) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}${endpoint}`);
+                    const status = response.status;
+                    const data = await response.json();
+                    results += `\n${endpoint}: ${status} - ${JSON.stringify(data)}`;
+                } catch (error) {
+                    results += `\n${endpoint}: ERROR - ${error.message}`;
+                }
+            }
+            
+            resultDiv.innerHTML = results;
+        }
+
+        async function testUpload() {
+            const resultDiv = document.getElementById('upload-result');
+            const fileInput = document.getElementById('fileInput');
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                resultDiv.innerHTML = '<span class="error">❌ Please select a file first</span>';
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            resultDiv.innerHTML = `Uploading ${file.name}...`;
+            
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                console.log('Uploading to:', `${API_BASE_URL}/api/v1/ingest`);
+                console.log('File:', file.name, file.type, file.size);
+                
+                const response = await fetch(`${API_BASE_URL}/api/v1/ingest`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                console.log('Response status:', response.status);
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<span class="success">✅ Upload successful!</span>\n${JSON.stringify(data, null, 2)}`;
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ Upload failed (${response.status})</span>\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                resultDiv.innerHTML = `<span class="error">❌ Error: ${error.message}</span>`;
+            }
+        }
+
+        async function testQuery() {
+            const resultDiv = document.getElementById('query-result');
+            const queryInput = document.getElementById('queryInput');
+            
+            const query = queryInput.value.trim() || 'test query';
+            resultDiv.innerHTML = `Querying: "${query}"...`;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/query`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        query_text: query
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<span class="success">✅ Query successful!</span>\n${JSON.stringify(data, null, 2)}`;
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ Query failed (${response.status})</span>\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Error: ${error.message}</span>`;
+            }
+        }
+
+        // Auto-test backend on load
+        window.onload = () => {
+            testBackend();
+        };
+    </script>
+</body>
+</html>

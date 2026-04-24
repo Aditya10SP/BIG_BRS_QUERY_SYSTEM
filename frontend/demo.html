@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph RAG Demo - Screenshots & Examples</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.95;
+        }
+
+        .demo-section {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .demo-section h2 {
+            color: #4f46e5;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        .demo-section h3 {
+            color: #6b7280;
+            margin: 30px 0 15px 0;
+            font-size: 1.3rem;
+        }
+
+        .example-box {
+            background: #f9fafb;
+            border-left: 4px solid #4f46e5;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .example-box strong {
+            color: #4f46e5;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .example-box code {
+            background: #e5e7eb;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .feature-card .icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-card h4 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .feature-card p {
+            opacity: 0.95;
+            font-size: 0.95rem;
+        }
+
+        .screenshot-placeholder {
+            background: #e5e7eb;
+            border: 2px dashed #9ca3af;
+            border-radius: 12px;
+            padding: 60px;
+            text-align: center;
+            color: #6b7280;
+            margin: 20px 0;
+        }
+
+        .screenshot-placeholder .icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #4f46e5;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 10px 5px;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #4338ca;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn-secondary {
+            background: #10b981;
+        }
+
+        .btn-secondary:hover {
+            background: #059669;
+        }
+
+        .cta-section {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            border-radius: 16px;
+            margin-top: 40px;
+        }
+
+        .cta-section h2 {
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style-position: inside;
+            line-height: 2;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Graph RAG Query System</h1>
+            <p>Intelligent Document Querying with AI-Powered Search</p>
+        </div>
+
+        <!-- Features Overview -->
+        <div class="demo-section">
+            <h2>✨ Key Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">📤</div>
+                    <h4>Easy Upload</h4>
+                    <p>Drag & drop .docx and .pdf files with real-time processing status</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🤖</div>
+                    <h4>AI-Powered</h4>
+                    <p>Multiple query modes: Vector, Graph, and Hybrid search</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📎</div>
+                    <h4>Source Citations</h4>
+                    <p>Every answer includes references to source documents</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">⚡</div>
+                    <h4>Fast & Accurate</h4>
+                    <p>Semantic search with faithfulness validation</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Demo -->
+        <div class="demo-section">
+            <h2>📤 Document Upload</h2>
+            <p>Upload your banking documents and watch them get processed in real-time.</p>
+            
+            <div class="screenshot-placeholder">
+                <div class="icon">🖼️</div>
+                <p><strong>Upload Interface</strong></p>
+                <p>Drag & drop area with file list and status tracking</p>
+            </div>
+
+            <h3>How it works:</h3>
+            <ul>
+                <li>Drag files into the upload area or click to browse</li>
+                <li>Supports .docx and .pdf formats</li>
+                <li>Real-time status updates (Pending → Processing → Completed)</li>
+                <li>Track multiple files simultaneously</li>
+                <li>View processing progress for each document</li>
+            </ul>
+        </div>
+
+        <!-- Query Demo -->
+        <div class="demo-section">
+            <h2>💬 Intelligent Querying</h2>
+            <p>Ask questions in natural language and get AI-powered answers with citations.</p>
+
+            <div class="screenshot-placeholder">
+                <div class="icon">🖼️</div>
+                <p><strong>Query Interface</strong></p>
+                <p>Mode selector, query input, and rich response display</p>
+            </div>
+
+            <h3>Query Modes:</h3>
+            
+            <div class="example-box">
+                <strong>🔵 Vector Mode - Semantic Search</strong>
+                <p>Best for factual questions about single concepts</p>
+                <p>Example: <code>"What is NEFT?"</code></p>
+            </div>
+
+            <div class="example-box">
+                <strong>🟣 Graph Mode - Relationship Queries</strong>
+                <p>Best for questions about dependencies and connections</p>
+                <p>Example: <code>"What systems does RTGS depend on?"</code></p>
+            </div>
+
+            <div class="example-box">
+                <strong>🟢 Hybrid Mode - Combined Approach</strong>
+                <p>Best for complex questions requiring both semantic and structural understanding</p>
+                <p>Example: <code>"Compare NEFT and RTGS transaction limits and their dependencies"</code></p>
+            </div>
+
+            <div class="example-box">
+                <strong>⚪ Auto Mode - Let AI Decide</strong>
+                <p>System automatically chooses the best mode for your question</p>
+                <p>Example: Any question - the AI will route it appropriately</p>
+            </div>
+        </div>
+
+        <!-- Example Queries -->
+        <div class="demo-section">
+            <h2>💡 Example Queries</h2>
+            
+            <h3>Factual Questions:</h3>
+            <ul>
+                <li>"What is NEFT?"</li>
+                <li>"Define transaction limit"</li>
+                <li>"Explain the RTGS process"</li>
+                <li>"What are the operating hours for NEFT?"</li>
+            </ul>
+
+            <h3>Relationship Questions:</h3>
+            <ul>
+                <li>"What systems does NEFT depend on?"</li>
+                <li>"Show all dependencies for RTGS"</li>
+                <li>"What integrates with Core Banking System?"</li>
+                <li>"Which payment modes use IFSC codes?"</li>
+            </ul>
+
+            <h3>Comparison Questions:</h3>
+            <ul>
+                <li>"Compare NEFT and RTGS transaction limits"</li>
+                <li>"What are the differences between payment modes?"</li>
+                <li>"Compare processing times across systems"</li>
+                <li>"How do NEFT and IMPS differ?"</li>
+            </ul>
+
+            <h3>Conflict Detection:</h3>
+            <ul>
+                <li>"Are there any conflicts in NEFT transaction limits?"</li>
+                <li>"Show contradictions in payment rules"</li>
+                <li>"What inconsistencies exist across documents?"</li>
+            </ul>
+
+            <h3>Workflow Questions:</h3>
+            <ul>
+                <li>"Describe the payment authorization workflow"</li>
+                <li>"Show the process chain for fund transfers"</li>
+                <li>"What are the steps in transaction processing?"</li>
+            </ul>
+        </div>
+
+        <!-- Response Features -->
+        <div class="demo-section">
+            <h2>📝 Rich Response Display</h2>
+            
+            <div class="screenshot-placeholder">
+                <div class="icon">🖼️</div>
+                <p><strong>Response Area</strong></p>
+                <p>Answer with citations, metrics, and source references</p>
+            </div>
+
+            <h3>What you get:</h3>
+            <ul>
+                <li><strong>AI-Generated Answer:</strong> Clear, concise response to your question</li>
+                <li><strong>Source Citations:</strong> References to specific documents and sections</li>
+                <li><strong>Faithfulness Score:</strong> Confidence metric (0-100%) showing answer accuracy</li>
+                <li><strong>Query Metrics:</strong> Execution time and chunks retrieved</li>
+                <li><strong>Mode Badge:</strong> Shows which retrieval mode was used</li>
+                <li><strong>Warnings:</strong> Alerts for low confidence or insufficient data</li>
+            </ul>
+        </div>
+
+        <!-- Status Dashboard -->
+        <div class="demo-section">
+            <h2>📊 Document Status Dashboard</h2>
+            
+            <div class="screenshot-placeholder">
+                <div class="icon">🖼️</div>
+                <p><strong>Status Cards</strong></p>
+                <p>Real-time overview of all documents</p>
+            </div>
+
+            <h3>Track your documents:</h3>
+            <ul>
+                <li><strong>Total Documents:</strong> All uploaded files</li>
+                <li><strong>Processing:</strong> Currently being indexed</li>
+                <li><strong>Completed:</strong> Ready for querying</li>
+                <li><strong>Failed:</strong> Errors that need attention</li>
+            </ul>
+        </div>
+
+        <!-- Technical Details -->
+        <div class="demo-section">
+            <h2>🔧 Technical Architecture</h2>
+            
+            <h3>Frontend Stack:</h3>
+            <ul>
+                <li>Pure HTML, CSS, and JavaScript (no frameworks)</li>
+                <li>Responsive design for all devices</li>
+                <li>Real-time status polling</li>
+                <li>Modern UI with smooth animations</li>
+            </ul>
+
+            <h3>Backend Integration:</h3>
+            <ul>
+                <li>RESTful API communication</li>
+                <li>File upload with FormData</li>
+                <li>JSON request/response handling</li>
+                <li>CORS-enabled for cross-origin requests</li>
+            </ul>
+
+            <h3>Powered By:</h3>
+            <ul>
+                <li><strong>Ollama:</strong> LLM for answer generation</li>
+                <li><strong>Qdrant:</strong> Vector database for semantic search</li>
+                <li><strong>Neo4j:</strong> Knowledge graph for relationships</li>
+                <li><strong>PostgreSQL:</strong> Document storage</li>
+            </ul>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="cta-section">
+            <h2>🚀 Ready to Get Started?</h2>
+            <p style="margin-bottom: 30px; font-size: 1.1rem;">
+                Launch the application and start querying your documents!
+            </p>
+            <a href="index.html" class="btn">Open Application</a>
+            <a href="README.md" class="btn btn-secondary">Read Documentation</a>
+        </div>
+    </div>
+</body>
+</html>
